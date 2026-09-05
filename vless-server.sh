@@ -1,6 +1,6 @@
 #!/bin/bash 
 #═══════════════════════════════════════════════════════════════════════════════
-#  多协议代理一键部署脚本 v3.4.10 [服务端]
+#  多协议代理一键部署脚本 v3.4.11 [服务端]
 #  
 #  架构升级:
 #    • Xray 核心: 处理 TCP/TLS 协议 (VLESS/VMess/Trojan/SOCKS/SS2022)
@@ -17,7 +17,7 @@
 #  项目地址: https://github.com/Felix666-ship-It/vless-all-in-one2
 #═══════════════════════════════════════════════════════════════════════════════
 
-readonly VERSION="3.4.10"
+readonly VERSION="3.4.11"
 readonly AUTHOR="Felix666-ship-It"
 readonly REPO_URL="https://github.com/Felix666-ship-It/vless-all-in-one2"
 readonly SCRIPT_REPO="Felix666-ship-It/vless-all-in-one2"
@@ -17723,6 +17723,7 @@ do_uninstall() {
 
 # 协议选择菜单
 select_protocol() {
+    TROJAN_FORCE_WS=""
     echo ""
     _line
     echo -e "  ${W}选择代理协议${NC}"
@@ -17732,28 +17733,29 @@ select_protocol() {
     _item "3" "VLESS + WS + TLS ${D}(CDN友好, 可作回落)${NC}"
     _item "4" "VMess + WS ${D}(回落分流/免流)${NC}"
     _item "5" "VLESS-XTLS-Vision ${D}(支持回落)${NC}"
-    _item "6" "Trojan ${D}(支持回落)${NC}"
-    _item "7" "Hysteria2 ${D}(UDP高速)${NC}"
-    _item "8" "Shadowsocks"
-    _item "9" "SOCKS5"
+    _item "6" "SOCKS5"
+    _item "7" "Shadowsocks 2022"
+    _item "8" "Hysteria2 ${D}(UDP高速)${NC}"
+    _item "9" "Trojan ${D}(支持回落)${NC}"
+    _item "10" "Trojan + WS ${D}(CDN 转发)${NC}"
     _line
     echo -e "  ${W}Surge 专属${NC}"
     _line
-    _item "10" "Snell v4"
-    _item "11" "Snell v5"
+    _item "11" "Snell v4"
+    _item "12" "Snell v5"
     _line
     echo -e "  ${W}其他协议${NC}"
     _line
-    _item "12" "AnyTLS"
-    _item "13" "TUIC v5"
-    _item "14" "NaïveProxy"
+    _item "13" "AnyTLS"
+    _item "14" "TUIC v5"
+    _item "15" "NaiveProxy"
     _item "0" "返回"
     echo ""
-    echo -e "  ${D}提示: 5/6 使用 8443 端口时，3/4 可作为回落共用${NC}"
+    echo -e "  ${D}提示: 5/9 使用 8443 端口时，3/4 可作为回落共用${NC}"
     echo ""
     
     while true; do
-        read -rp "  选择协议 [0-14]: " choice
+        read -rp "  选择协议 [0-15]: " choice
         case $choice in
             0) SELECTED_PROTOCOL=""; return 1 ;;
             1) SELECTED_PROTOCOL="vless"; break ;;
@@ -17761,15 +17763,16 @@ select_protocol() {
             3) SELECTED_PROTOCOL="vless-ws"; break ;;
             4) SELECTED_PROTOCOL="vmess-ws"; break ;;
             5) SELECTED_PROTOCOL="vless-vision"; break ;;
-            6) SELECTED_PROTOCOL="trojan"; break ;;
-            7) SELECTED_PROTOCOL="hy2"; break ;;
-            8) select_ss_version || return 1; break ;;
-            9) SELECTED_PROTOCOL="socks"; break ;;
-            10) SELECTED_PROTOCOL="snell"; break ;;
-            11) SELECTED_PROTOCOL="snell-v5"; break ;;
-            12) SELECTED_PROTOCOL="anytls"; break ;;
-            13) SELECTED_PROTOCOL="tuic"; break ;;
-            14) SELECTED_PROTOCOL="naive"; break ;;
+            6) SELECTED_PROTOCOL="socks"; break ;;
+            7) select_ss_version || return 1; break ;;
+            8) SELECTED_PROTOCOL="hy2"; break ;;
+            9) SELECTED_PROTOCOL="trojan"; break ;;
+            10) SELECTED_PROTOCOL="trojan"; TROJAN_FORCE_WS=1; break ;;
+            11) SELECTED_PROTOCOL="snell"; break ;;
+            12) SELECTED_PROTOCOL="snell-v5"; break ;;
+            13) SELECTED_PROTOCOL="anytls"; break ;;
+            14) SELECTED_PROTOCOL="tuic"; break ;;
+            15) SELECTED_PROTOCOL="naive"; break ;;
             *) _err "无效选择" ;;
         esac
     done
@@ -18744,17 +18747,22 @@ do_install_server() {
         trojan)
             local password=$(ask_password 16 "Trojan密码")
             
-            # 选择传输模式
-            echo ""
-            _line
-            echo -e "  ${C}选择 Trojan 传输模式${NC}"
-            _line
-            echo -e "  ${G}1)${NC} TCP+TLS (默认，支持回落)"
-            echo -e "  ${G}2)${NC} WebSocket+TLS (支持 CDN 转发)"
-            _line
-            echo ""
-            read -rp "  请选择 [1-2，回车默认1]: " trojan_mode
-            trojan_mode="${trojan_mode:-1}"
+            # 选择传输模式（从主菜单「Trojan + WS」进入时自动选择 WS）
+            if [[ "${TROJAN_FORCE_WS:-}" == "1" ]]; then
+                trojan_mode="2"
+            else
+                echo ""
+                _line
+                echo -e "  ${C}选择 Trojan 传输模式${NC}"
+                _line
+                echo -e "  ${G}1)${NC} TCP+TLS (默认，支持回落)"
+                echo -e "  ${G}2)${NC} WebSocket+TLS (支持 CDN 转发)"
+                _line
+                echo ""
+                read -rp "  请选择 [1-2，回车默认1]: " trojan_mode
+                trojan_mode="${trojan_mode:-1}"
+            fi
+            TROJAN_FORCE_WS=""
             
             local use_ws=false
             local path="/trojan"
