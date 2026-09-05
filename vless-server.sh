@@ -14,14 +14,14 @@
 #  
 #  
 #  作者: Chil30
-#  项目地址: https://github.com/Chil30/vless-all-in-one
+#  项目地址: https://github.com/Felix666-ship-It/vless-all-in-one2
 #═══════════════════════════════════════════════════════════════════════════════
 
 readonly VERSION="3.4.10"
 readonly AUTHOR="Chil30"
-readonly REPO_URL="https://github.com/Chil30/vless-all-in-one"
-readonly SCRIPT_REPO="Chil30/vless-all-in-one"
-readonly SCRIPT_RAW_URL="https://raw.githubusercontent.com/Chil30/vless-all-in-one/main/vless-server.sh"
+readonly REPO_URL="https://github.com/Felix666-ship-It/vless-all-in-one2"
+readonly SCRIPT_REPO="Felix666-ship-It/vless-all-in-one2"
+readonly SCRIPT_RAW_URL="https://raw.githubusercontent.com/Felix666-ship-It/vless-all-in-one2/main/vless-server.sh"
 readonly CFG="/etc/vless-reality"
 readonly ACME_DEFAULT_EMAIL="acme@vaio.com"
 
