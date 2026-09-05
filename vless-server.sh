@@ -18033,7 +18033,7 @@ do_install_server() {
             local keys=$(xray x25519 2>/dev/null)
             [[ -z "$keys" ]] && { _err "密钥生成失败"; _pause; return 1; }
             local privkey=$(echo "$keys" | grep "PrivateKey:" | awk '{print $2}')
-            local pubkey=$(echo "$keys" | grep "Password:" | awk '{print $2}')
+            local pubkey=$(echo "$keys" | grep "PublicKey" | awk '{print $NF}')
             [[ -z "$privkey" || -z "$pubkey" ]] && { _err "密钥提取失败"; _pause; return 1; }
             
             # 使用统一的证书和 Nginx 配置函数
@@ -18095,7 +18095,7 @@ do_install_server() {
                 local keys=$(xray x25519 2>/dev/null)
                 [[ -z "$keys" ]] && { _err "密钥生成失败"; _pause; return 1; }
                 local privkey=$(echo "$keys" | grep "PrivateKey:" | awk '{print $2}')
-                local pubkey=$(echo "$keys" | grep "Password:" | awk '{print $2}')
+                local pubkey=$(echo "$keys" | grep "PublicKey" | awk '{print $NF}')
                 [[ -z "$privkey" || -z "$pubkey" ]] && { _err "密钥提取失败"; _pause; return 1; }
                 
                 # 使用统一的证书和 Nginx 配置函数
