@@ -13,12 +13,12 @@
 #  适配: Alpine/Debian/Ubuntu/CentOS
 #  
 #  
-#  作者: Chil30
+#  作者: Felix666-ship-It
 #  项目地址: https://github.com/Felix666-ship-It/vless-all-in-one2
 #═══════════════════════════════════════════════════════════════════════════════
 
 readonly VERSION="3.4.10"
-readonly AUTHOR="Chil30"
+readonly AUTHOR="Felix666-ship-It"
 readonly REPO_URL="https://github.com/Felix666-ship-It/vless-all-in-one2"
 readonly SCRIPT_REPO="Felix666-ship-It/vless-all-in-one2"
 readonly SCRIPT_RAW_URL="https://raw.githubusercontent.com/Felix666-ship-It/vless-all-in-one2/main/vless-server.sh"
